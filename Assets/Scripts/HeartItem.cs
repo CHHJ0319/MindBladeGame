@@ -33,7 +33,7 @@ public class HeartItem : MonoBehaviour
             return;
         }
 
-        if (!other.TryGetComponent(out PlayerMove player))
+        if (!other.TryGetComponent(out SwordMove player))
         {
             return;
         }

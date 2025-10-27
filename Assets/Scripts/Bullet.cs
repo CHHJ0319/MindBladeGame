@@ -13,6 +13,7 @@ public class Bullet : MonoBehaviour
 
     private void Start()
     {
+        RotateTowardsDirection(direction);
         Destroy(gameObject, lifeTime);
     }
 
@@ -26,7 +27,20 @@ public class Bullet : MonoBehaviour
         transform.Translate(direction * speed * Time.deltaTime, Space.World);
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void RotateTowardsDirection(Vector3 direction)
+    {
+        if (direction.sqrMagnitude == 0)
+        {
+            return;
+        }
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        angle -= 90f;
+        transform.rotation = Quaternion.Euler(0, 0, angle);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collider)
     {
         var manager = GameManager.Instance;
         if (manager == null || !manager.IsGameRunning)
@@ -34,12 +48,19 @@ public class Bullet : MonoBehaviour
             return;
         }
 
-        if (!other.TryGetComponent(out PlayerMove player))
+        if (collider.TryGetComponent(out PlayerController player))
+        {
+            manager.DamagePlayer();
+            Destroy(gameObject);
+        }
+        else if (collider.TryGetComponent(out SwordMove sword))
+        {
+            Destroy(gameObject);
+        }
+        else
         {
             return;
         }
-
-        manager.DamagePlayer();
-        Destroy(gameObject);
+        
     }
 }

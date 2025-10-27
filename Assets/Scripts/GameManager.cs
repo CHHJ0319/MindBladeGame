@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
 
     [Header("플레이어 설정")]
     [Tooltip("게임에서 조작할 플레이어 스크립트")]
-    [SerializeField] private PlayerMove player;
+    [SerializeField] private SwordMove player;
 
     [Tooltip("초기 생명 수")]
     [SerializeField] private int startingLives = 1;
@@ -126,7 +126,7 @@ public class GameManager : MonoBehaviour
         // 플레이어 및 탄환 생성기 자동 연결
         if (player == null)
         {
-            player = FindObjectOfType<PlayerMove>();
+            player = FindObjectOfType<SwordMove>();
         }
         if (bulletSpawner == null)
         {
@@ -283,6 +283,35 @@ public class GameManager : MonoBehaviour
         if (gameOverScoreText != null)
         {
             gameOverScoreText.text = $"생존 시간: {elapsedTime:F1}초";
+        }
+    }
+
+    public void HandleGameClear()
+    {
+        isGameOver = true;
+        Time.timeScale = 0f;
+
+        if (bulletSpawner != null)
+        {
+            bulletSpawner.enabled = false;
+        }
+
+        TryAddScore(elapsedTime);
+
+        if (messagePanel != null)
+        {
+            messagePanel.SetActive(false);
+        }
+        encouragementTimer = 0f;
+
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+        }
+        // 게임 오버 점수 표시
+        if (gameOverScoreText != null)
+        {
+            gameOverScoreText.text = "Game Clear";
         }
     }
 
