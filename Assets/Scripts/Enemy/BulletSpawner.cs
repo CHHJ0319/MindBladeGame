@@ -8,6 +8,7 @@ public class BulletSpawner : MonoBehaviour
 {
     [Tooltip("생성할 탄환 프리팹")]
     public GameObject bulletPrefab;
+    public GameObject guidedBulletPrefab;
 
     [Tooltip("기본 탄환 생성 간격 (초)")]
     public float baseSpawnInterval = 1f;
@@ -32,12 +33,19 @@ public class BulletSpawner : MonoBehaviour
     // 메인 카메라 참조
     private Camera mainCamera;
 
+    private float guidedBulletRate = 0.5f;
+
     /// <summary>
     /// 게임 시작 시 메인 카메라를 찾아서 저장합니다.
     /// </summary>
     private void Start()
     {
         mainCamera = Camera.main;
+        if (mainCamera == null)
+        {
+            Debug.LogWarning("Main Camera가 설정되지 않았습니다.");
+            return;
+        }
     }
 
     /// <summary>
@@ -102,9 +110,9 @@ public class BulletSpawner : MonoBehaviour
     private void SpawnBullet(float bulletSpeed)
     {
         // 프리팹 또는 카메라가 없으면 경고 출력 후 리턴
-        if (bulletPrefab == null || mainCamera == null)
+        if (bulletPrefab == null || guidedBulletPrefab == null)
         {
-            Debug.LogWarning("BulletPrefab 또는 Camera가 설정되지 않았습니다.");
+            Debug.LogWarning("BulletPrefab 설정되지 않았습니다.");
             return;
         }
 
@@ -137,8 +145,16 @@ public class BulletSpawner : MonoBehaviour
                 break;
         }
 
-        // 탄환 프리팹을 지정된 위치에 생성
-        GameObject newBullet = Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
+        float homingRate = Random.Range(0, 1.0f);
+        GameObject newBullet;
+        if (homingRate < guidedBulletRate)
+        {
+            newBullet = Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
+        }
+        else
+        {
+            newBullet = Instantiate(guidedBulletPrefab, spawnPos, Quaternion.identity);
+        }
 
         // Bullet 컴포넌트가 있으면 방향과 속도 설정
         if (newBullet.TryGetComponent(out Bullet bullet))

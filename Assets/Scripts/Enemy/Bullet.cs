@@ -27,7 +27,7 @@ public class Bullet : MonoBehaviour
         transform.Translate(direction * speed * Time.deltaTime, Space.World);
     }
 
-    private void RotateTowardsDirection(Vector3 direction)
+    protected void RotateTowardsDirection(Vector3 direction)
     {
         if (direction.sqrMagnitude == 0)
         {
@@ -35,7 +35,6 @@ public class Bullet : MonoBehaviour
         }
 
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
         angle -= 90f;
         transform.rotation = Quaternion.Euler(0, 0, angle);
     }
