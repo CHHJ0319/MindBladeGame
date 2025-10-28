@@ -53,7 +53,7 @@ public class Bullet : MonoBehaviour
             manager.DamagePlayer();
             Destroy(gameObject);
         }
-        else if (collider.TryGetComponent(out SwordMove sword))
+        else if (collider.TryGetComponent(out SwordController sword))
         {
             Destroy(gameObject);
         }

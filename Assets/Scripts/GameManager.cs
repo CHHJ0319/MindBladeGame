@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
 
     [Header("플레이어 설정")]
     [Tooltip("게임에서 조작할 플레이어 스크립트")]
-    [SerializeField] private SwordMove player;
+    [SerializeField] private SwordController player;
 
     [Tooltip("초기 생명 수")]
     [SerializeField] private int startingLives = 1;
@@ -29,9 +29,6 @@ public class GameManager : MonoBehaviour
     [Header("UI")]
     [Tooltip("생명 수를 표시하는 Text")]
     [SerializeField] private Text lifeText;
-
-    [Tooltip("생존 시간을 표시하는 Text")]
-    [SerializeField] private Text timeText;
 
     [Tooltip("격려 메시지 컨테이너")]
     [SerializeField] private GameObject messagePanel;
@@ -44,9 +41,6 @@ public class GameManager : MonoBehaviour
 
     [Tooltip("게임 오버 시 점수를 표시하는 Text")]
     [SerializeField] private Text gameOverScoreText;
-
-    [Tooltip("랭킹을 표시하는 Text")]
-    [SerializeField] private Text rankingText;
 
     [Header("격려 메시지 설정")]
     [Tooltip("10초마다 순환될 격려 메시지 목록")]
@@ -126,7 +120,7 @@ public class GameManager : MonoBehaviour
         // 플레이어 및 탄환 생성기 자동 연결
         if (player == null)
         {
-            player = FindObjectOfType<SwordMove>();
+            player = FindObjectOfType<SwordController>();
         }
         if (bulletSpawner == null)
         {
@@ -162,8 +156,6 @@ public class GameManager : MonoBehaviour
 
         // 경과 시간 증가
         elapsedTime += Time.deltaTime;
-        // 생존 시간 UI 갱신
-        UpdateTimerUI();
 
         // 격려 메시지, 하트 아이템, 무적 상태 처리
         HandleEncouragement();
@@ -187,8 +179,6 @@ public class GameManager : MonoBehaviour
         invincibleTimer = 0f;
 
         UpdateLifeUI();
-        UpdateTimerUI();
-        UpdateLeaderboardUI();
 
         // 격려 메시지, 게임 오버 패널 숨기기
         if (messagePanel != null)
@@ -282,7 +272,7 @@ public class GameManager : MonoBehaviour
         // 게임 오버 점수 표시
         if (gameOverScoreText != null)
         {
-            gameOverScoreText.text = $"생존 시간: {elapsedTime:F1}초";
+            gameOverScoreText.text = "Game Over";
         }
     }
 
@@ -449,19 +439,6 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 생존 시간 UI 갱신
-    /// </summary>
-    private void UpdateTimerUI()
-    {
-        if (timeText == null)
-        {
-            return;
-        }
-
-        timeText.text = $"Time : {elapsedTime:F1}s";
-    }
-
-    /// <summary>
     /// 리더보드에 점수 추가 및 저장, UI 갱신
     /// </summary>
     /// <param name="score">추가할 점수(생존 시간)</param>
@@ -475,7 +452,6 @@ public class GameManager : MonoBehaviour
         }
 
         SaveLeaderboard();
-        UpdateLeaderboardUI();
     }
 
     /// <summary>
@@ -514,33 +490,6 @@ public class GameManager : MonoBehaviour
         string data = string.Join("|", leaderboard.Select(v => v.ToString("F3")));
         PlayerPrefs.SetString(LeaderboardKey, data);
         PlayerPrefs.Save();
-    }
-
-    /// <summary>
-    /// 리더보드 UI 갱신 (상위 5개 점수 표시)
-    /// </summary>
-    private void UpdateLeaderboardUI()
-    {
-        if (rankingText == null)
-        {
-            return;
-        }
-
-        var builder = new StringBuilder();
-        builder.AppendLine("TOP 5");
-        for (int i = 0; i < MaxLeaderboardEntries; i++)
-        {
-            if (i < leaderboard.Count)
-            {
-                builder.AppendLine($"{i + 1}. {leaderboard[i]:F1}초");
-            }
-            else
-            {
-                builder.AppendLine($"{i + 1}. ---");
-            }
-        }
-
-        rankingText.text = builder.ToString();
     }
 
     /// <summary>

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class SwordMove : MonoBehaviour
+public class SwordController : MonoBehaviour
 {
     [Tooltip("플레이어 이동 속도")]
     public float moveSpeed = 5f;
@@ -34,7 +34,22 @@ public class SwordMove : MonoBehaviour
             return;
         }
 
-        Vector2 target = movement.sqrMagnitude > 1f ? movement.normalized : movement;
-        rb.MovePosition(rb.position + target * moveSpeed * Time.fixedDeltaTime);
+        Vector2 dir = movement.sqrMagnitude > 1f ? movement.normalized : movement;
+        rb.MovePosition(rb.position + dir * moveSpeed * Time.fixedDeltaTime);
+
+        RotateTowardsDirection(dir);
+    }
+
+    private void RotateTowardsDirection(Vector3 direction)
+    {
+        if (direction.sqrMagnitude == 0)
+        {
+            return;
+        }
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        angle -= 90f;
+        transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 }
