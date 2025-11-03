@@ -18,6 +18,13 @@ public class PlayerController : MonoBehaviour
     }
     private float invincibleTimer;
 
+    private int lives;
+    public int Lives 
+    { 
+        get { return lives; }
+    }
+    private int startingLives = 3;
+
     private Rigidbody2D rb;
 
     private Vector2 targetDir;
@@ -33,6 +40,8 @@ public class PlayerController : MonoBehaviour
 
         isInvincible = false;
         invincibleTimer = 0f;
+
+        lives = Mathf.Max(1, startingLives);
     }
 
     void Update()
@@ -85,4 +94,18 @@ public class PlayerController : MonoBehaviour
         invincibleTimer = invincibilityDuration;
     }
 
+    public void TakeDamage()
+    {
+        lives = Mathf.Max(0, lives - 1);
+    }
+
+    public void AddLife(int amount = 1)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        lives += amount;
+    }
 }

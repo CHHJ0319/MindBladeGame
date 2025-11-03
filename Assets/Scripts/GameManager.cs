@@ -21,9 +21,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private SwordController sword;
     [SerializeField] private PlayerController player;
 
-    [Tooltip("초기 생명 수")]
-    [SerializeField] private int startingLives = 1;
-
     [Header("UI")]
     [Tooltip("생명 수를 표시하는 Text")]
     [SerializeField] private Text lifeText;
@@ -77,8 +74,7 @@ public class GameManager : MonoBehaviour
 
     // 게임 경과 시간(초)
     private float elapsedTime;
-    // 현재 플레이어 생명 수
-    private int lives;
+
     // 게임 오버 상태 여부
     private bool isGameOver;
     // 다음 격려 메시지 표시까지 남은 시간(초)
@@ -164,7 +160,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         isGameOver = false;
         elapsedTime = 0f;
-        lives = Mathf.Max(1, startingLives);
+        
         nextEncouragementTime = 10f;
         encouragementTimer = 0f;
         heartTimer = 0f;
@@ -198,11 +194,11 @@ public class GameManager : MonoBehaviour
         }
 
         // 생명 감소
-        lives = Mathf.Max(0, lives - 1);
+        player.TakeDamage();
         UpdateLifeUI();
 
         // 생명이 0 이하이면 게임 오버 처리
-        if (lives <= 0)
+        if (player.Lives <= 0)
         {
             HandleGameOver();
         }
@@ -210,22 +206,6 @@ public class GameManager : MonoBehaviour
         {
             player.StartInvincibility();
         }
-    }
-
-    /// <summary>
-    /// 플레이어 생명 추가(하트 아이템 획득 등)
-    /// </summary>
-    /// <param name="amount">추가할 생명 수(기본값 1)</param>
-    public void AddLife(int amount = 1)
-    {
-        // 게임 진행 중이 아니거나 잘못된 값이면 무시
-        if (!IsGameRunning || amount <= 0)
-        {
-            return;
-        }
-
-        lives += amount;
-        UpdateLifeUI();
     }
 
     /// <summary>
@@ -387,31 +367,31 @@ public class GameManager : MonoBehaviour
             Destroy(heart, heartLifetime);
         }
     }
-
-    /// <summary>
-    /// 플레이어 무적 상태 타이머 갱신 및 해제
-    /// </summary>
-    
+    public void AddLife(int amount = 1)
+    {
+        player.AddLife();
+        UpdateLifeUI();
+    }
 
     /// <summary>
     /// 생명 수 UI 갱신 (하트 이모지로 시각화)
     /// </summary>
-    private void UpdateLifeUI()
+    public void UpdateLifeUI()
     {
         if (lifeText == null)
         {
             return;
         }
 
-        if (lives <= 0)
+        if (player.Lives <= 0)
         {
             lifeText.text = "Life : 0";
             return;
         }
 
         // 생명 수만큼 하트 이모지 표시(최대 10개)
-        string heartDisplay = new string('\u2665', Mathf.Clamp(lives, 0, 10));
-        lifeText.text = $"Life : {lives}  {heartDisplay}";
+        string heartDisplay = new string('\u2665', Mathf.Clamp(player.Lives, 0, 10));
+        lifeText.text = $"Life : {player.Lives}  {heartDisplay}";
     }
 
     /// <summary>
