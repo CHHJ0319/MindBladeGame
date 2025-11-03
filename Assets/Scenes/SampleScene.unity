@@ -865,6 +865,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &707010026 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2409559292890112437, guid: 2f6b98b749698424d82dcb34b6766f35, type: 3}
+  m_PrefabInstance: {fileID: 1278106858}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3dab960269a098f409948cec2b82e935, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &728203001
 GameObject:
   m_ObjectHideFlags: 0
@@ -1183,6 +1194,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 2409559292890112437, guid: 2f6b98b749698424d82dcb34b6766f35, type: 3}
+      propertyPath: escortee
+      value: 
+      objectReference: {fileID: 2011172810}
+    - target: {fileID: 2409559292890112437, guid: 2f6b98b749698424d82dcb34b6766f35, type: 3}
+      propertyPath: escorteeController
+      value: 
+      objectReference: {fileID: 2011172810}
     - target: {fileID: 7131463314897450666, guid: 2f6b98b749698424d82dcb34b6766f35, type: 3}
       propertyPath: m_LocalPosition.x
       value: 8.68
@@ -1257,9 +1276,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c9b9ffa9ee6f1f458a633d9bab982e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  sword: {fileID: 0}
+  player: {fileID: 707010026}
   startingLives: 1
-  invincibilityDuration: 1.5
   lifeText: {fileID: 960010419}
   messagePanel: {fileID: 1943425785}
   messageText: {fileID: 1716314532}
@@ -1572,6 +1591,17 @@ RectTransform:
   m_AnchoredPosition: {x: 50, y: 120}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2011172810 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3655233506502832192, guid: dbc0d034dfb26934d93f086908d8491a, type: 3}
+  m_PrefabInstance: {fileID: 1608674018825673329}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3530551b4ca8e9e4e95c43a83f7d787a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2025342197
 GameObject:
   m_ObjectHideFlags: 0
@@ -1661,7 +1691,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 604888989794562744, guid: dbc0d034dfb26934d93f086908d8491a, type: 3}
       propertyPath: m_IsTrigger
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 926831243345050070, guid: dbc0d034dfb26934d93f086908d8491a, type: 3}
       propertyPath: m_Name

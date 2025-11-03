@@ -18,13 +18,11 @@ public class GameManager : MonoBehaviour
 
     [Header("플레이어 설정")]
     [Tooltip("게임에서 조작할 플레이어 스크립트")]
-    [SerializeField] private SwordController player;
+    [SerializeField] private SwordController sword;
+    [SerializeField] private PlayerController player;
 
     [Tooltip("초기 생명 수")]
     [SerializeField] private int startingLives = 1;
-
-    [Tooltip("피격 후 무적 유지 시간(초)")]
-    [SerializeField] private float invincibilityDuration = 1.5f;
 
     [Header("UI")]
     [Tooltip("생명 수를 표시하는 Text")]
@@ -89,10 +87,6 @@ public class GameManager : MonoBehaviour
     private float encouragementTimer;
     // 하트 아이템 생성 타이머
     private float heartTimer;
-    // 플레이어 무적 상태 여부
-    private bool isInvincible;
-    // 무적 남은 시간(초)
-    private float invincibleTimer;
 
     /// <summary>
     /// 게임이 진행 중인지 여부
@@ -118,9 +112,9 @@ public class GameManager : MonoBehaviour
         Instance = this;
 
         // 플레이어 및 탄환 생성기 자동 연결
-        if (player == null)
+        if (sword == null)
         {
-            player = FindObjectOfType<SwordController>();
+            sword = FindObjectOfType<SwordController>();
         }
         if (bulletSpawner == null)
         {
@@ -160,7 +154,6 @@ public class GameManager : MonoBehaviour
         // 격려 메시지, 하트 아이템, 무적 상태 처리
         HandleEncouragement();
         HandleHeartSpawn();
-        UpdateInvincibility();
     }
 
     /// <summary>
@@ -175,8 +168,6 @@ public class GameManager : MonoBehaviour
         nextEncouragementTime = 10f;
         encouragementTimer = 0f;
         heartTimer = 0f;
-        isInvincible = false;
-        invincibleTimer = 0f;
 
         UpdateLifeUI();
 
@@ -201,8 +192,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void DamagePlayer()
     {
-        // 게임 진행 중이 아니거나 무적 상태면 무시
-        if (!IsGameRunning || isInvincible)
+        if (!IsGameRunning || player.IsInvincible)
         {
             return;
         }
@@ -218,9 +208,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            // 무적 상태 부여
-            isInvincible = true;
-            invincibleTimer = invincibilityDuration;
+            player.StartInvincibility();
         }
     }
 
@@ -403,19 +391,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// 플레이어 무적 상태 타이머 갱신 및 해제
     /// </summary>
-    private void UpdateInvincibility()
-    {
-        if (!isInvincible)
-        {
-            return;
-        }
-
-        invincibleTimer -= Time.deltaTime;
-        if (invincibleTimer <= 0f)
-        {
-            isInvincible = false;
-        }
-    }
+    
 
     /// <summary>
     /// 생명 수 UI 갱신 (하트 이모지로 시각화)

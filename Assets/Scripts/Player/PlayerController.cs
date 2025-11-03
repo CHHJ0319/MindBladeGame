@@ -4,9 +4,19 @@ using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
-    public EscorteeController escorteeController;
+    [Header("Escortee")]
+    public EscorteeController escortee;
 
+    [Header("Property")]
     public float moveSpeed = 1f;
+    [SerializeField] private float invincibilityDuration = 1.5f;
+
+    private bool isInvincible;
+    public bool IsInvincible 
+    {  
+        get { return isInvincible; }
+    }
+    private float invincibleTimer;
 
     private Rigidbody2D rb;
 
@@ -20,11 +30,19 @@ public class PlayerController : MonoBehaviour
             enabled = false;
             return;
         }
+
+        isInvincible = false;
+        invincibleTimer = 0f;
+    }
+
+    void Update()
+    {
+        UpdateInvincibility();
     }
 
     void FixedUpdate()
     {
-        if (!escorteeController.IsMoving)
+        if (!escortee.IsMoving)
         {
             rb.linearVelocity = Vector2.zero;
             return;
@@ -36,7 +54,7 @@ public class PlayerController : MonoBehaviour
 
     private void SetDirection()
     {
-        targetDir = escorteeController.Direction;
+        targetDir = escortee.Direction;
     }
 
     private void MovePlayer()
@@ -44,6 +62,27 @@ public class PlayerController : MonoBehaviour
         float distanceToMove = moveSpeed * Time.fixedDeltaTime;
         rb.MovePosition(rb.position + targetDir * distanceToMove);
 
+    }
+
+    private void UpdateInvincibility()
+    {
+        if (!isInvincible)
+        {
+            return;
+        }
+
+
+        invincibleTimer -= Time.deltaTime;
+        if (invincibleTimer <= 0f)
+        {
+            isInvincible = false;
+        }
+    }
+
+    public void StartInvincibility()
+    {
+        isInvincible = true;
+        invincibleTimer = invincibilityDuration;
     }
 
 }
