@@ -48,8 +48,8 @@ public class SwordController : MonoBehaviour
         }
 
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        angle -= 90;
 
-        angle -= 90f;
-        transform.rotation = Quaternion.Euler(0, 0, angle);
+        transform.rotation = Quaternion.Euler(0, 0, 210f + angle);
     }
 }

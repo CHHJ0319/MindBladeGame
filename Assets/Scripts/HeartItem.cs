@@ -54,8 +54,6 @@ public class HeartItem : MonoBehaviour
             renderer.sprite = Resources.GetBuiltinResource<Sprite>("UI/Skin/UISprite.psd");
         }
 
-        renderer.color = new Color(1f, 0.4f, 0.6f, 1f);
-
         if (!TryGetComponent(out Collider2D collider))
         {
             collider = gameObject.AddComponent<CircleCollider2D>();
