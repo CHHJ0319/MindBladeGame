@@ -14,25 +14,13 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// 싱글톤 인스턴스. 어디서든 GameManager.Instance로 접근 가능합니다.
     /// </summary>
-    public static GameManager Instance { get; private set; }
 
     [Header("플레이어 설정")]
     [Tooltip("게임에서 조작할 플레이어 스크립트")]
     [SerializeField] private SwordController sword;
-    [SerializeField] private PlayerController player;
-
-    [Header("UI")]
-    [Tooltip("생명 수를 표시하는 Text")]
-    [SerializeField] private Text lifeText;
-
-    [Tooltip("격려 메시지 컨테이너")]
-    [SerializeField] private GameObject messagePanel;
 
     [Tooltip("격려 메시지를 표시할 Text")]
     [SerializeField] private Text messageText;
-
-    [Tooltip("게임 오버 패널")]
-    [SerializeField] private GameObject gameOverPanel;
 
     [Tooltip("게임 오버 시 점수를 표시하는 Text")]
     [SerializeField] private Text gameOverScoreText;
@@ -61,9 +49,12 @@ public class GameManager : MonoBehaviour
     [Tooltip("하트 아이템이 사라지기까지 유지되는 시간(초)")]
     [SerializeField] private float heartLifetime = 6f;
 
-    [Header("연동 컴포넌트")]
-    [Tooltip("탄환 생성기를 연결해 게임 오버 시 멈춥니다.")]
-    [SerializeField] private BulletSpawner bulletSpawner;
+    private static PlayerController player;
+    private static BulletSpawner bulletSpawner;
+
+    private static Text lifeText;
+    private static MessagePanel messagePanel;
+    private static GameResultPanel gameResultPanel;
 
     // 리더보드(랭킹) 점수 리스트
     private readonly List<float> leaderboard = new List<float>();
@@ -72,49 +63,26 @@ public class GameManager : MonoBehaviour
     // 리더보드에 표시할 최대 점수 개수
     private const int MaxLeaderboardEntries = 5;
 
-    // 게임 경과 시간(초)
-    private float elapsedTime;
+    private static float elapsedTime;
 
-    // 게임 오버 상태 여부
-    private bool isGameOver;
+    
     // 다음 격려 메시지 표시까지 남은 시간(초)
     private float nextEncouragementTime = 10f;
-    // 격려 메시지 표시 타이머
-    private float encouragementTimer;
+    private static float encouragementTimer;
     // 하트 아이템 생성 타이머
     private float heartTimer;
 
-    /// <summary>
-    /// 게임이 진행 중인지 여부
-    /// </summary>
-    public bool IsGameRunning => !isGameOver;
-    /// <summary>
-    /// 현재까지 생존한 시간(초)
-    /// </summary>
-    public float ElapsedTime => elapsedTime;
+    private static bool isGameOver;
+    public static bool IsGameRunning => !isGameOver;
 
-    /// <summary>
-    /// 싱글톤 인스턴스 설정 및 주요 컴포넌트 연결, 리더보드 불러오기
-    /// </summary>
+    public static float ElapsedTime => elapsedTime;
+
     private void Awake()
     {
-        // 이미 인스턴스가 있으면 중복 제거
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-
         // 플레이어 및 탄환 생성기 자동 연결
         if (sword == null)
         {
             sword = FindObjectOfType<SwordController>();
-        }
-        if (bulletSpawner == null)
-        {
-            bulletSpawner = FindObjectOfType<BulletSpawner>();
         }
 
         // 리더보드 불러오기
@@ -170,11 +138,11 @@ public class GameManager : MonoBehaviour
         // 격려 메시지, 게임 오버 패널 숨기기
         if (messagePanel != null)
         {
-            messagePanel.SetActive(false);
+            messagePanel.gameObject.SetActive(false);
         }
-        if (gameOverPanel != null)
+        if (gameResultPanel != null)
         {
-            gameOverPanel.SetActive(false);
+            gameResultPanel.gameObject.SetActive(false);
         }
         // 탄환 생성기 활성화
         if (bulletSpawner != null)
@@ -183,10 +151,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 플레이어가 데미지를 입었을 때 호출
-    /// </summary>
-    public void DamagePlayer()
+    public static void DamagePlayer()
     {
         if (!IsGameRunning || player.IsInvincible)
         {
@@ -208,43 +173,30 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 게임 오버 처리 및 UI, 랭킹 갱신
-    /// </summary>
-    private void HandleGameOver()
+    private static void HandleGameOver()
     {
         isGameOver = true;
         Time.timeScale = 0f;
 
-        // 탄환 생성기 비활성화
         if (bulletSpawner != null)
         {
             bulletSpawner.enabled = false;
         }
 
-        // 리더보드에 점수 추가
-        TryAddScore(elapsedTime);
-
-        // 격려 메시지 숨기기
         if (messagePanel != null)
         {
-            messagePanel.SetActive(false);
+            messagePanel.gameObject.SetActive(false);
         }
         encouragementTimer = 0f;
 
-        // 게임 오버 패널 표시
-        if (gameOverPanel != null)
+        if (gameResultPanel != null)
         {
-            gameOverPanel.SetActive(true);
-        }
-        // 게임 오버 점수 표시
-        if (gameOverScoreText != null)
-        {
-            gameOverScoreText.text = "Game Over";
+            gameResultPanel.gameObject.SetActive(true);
+            gameResultPanel.SetGameResultText("Game Over");
         }
     }
 
-    public void HandleGameClear()
+    public static void HandleGameClear()
     {
         isGameOver = true;
         Time.timeScale = 0f;
@@ -254,22 +206,16 @@ public class GameManager : MonoBehaviour
             bulletSpawner.enabled = false;
         }
 
-        TryAddScore(elapsedTime);
-
         if (messagePanel != null)
         {
-            messagePanel.SetActive(false);
+            messagePanel.gameObject.SetActive(false);
         }
         encouragementTimer = 0f;
 
-        if (gameOverPanel != null)
+        if (gameResultPanel != null)
         {
-            gameOverPanel.SetActive(true);
-        }
-        // 게임 오버 점수 표시
-        if (gameOverScoreText != null)
-        {
-            gameOverScoreText.text = "Game Clear";
+            gameResultPanel.gameObject.SetActive(true);
+            gameResultPanel.SetGameResultText("Game Clear");
         }
     }
 
@@ -308,7 +254,7 @@ public class GameManager : MonoBehaviour
 
         var message = encouragementMessages[Random.Range(0, encouragementMessages.Length)];
         messageText.text = message;
-        messagePanel.SetActive(true);
+        messagePanel.gameObject.SetActive(true);
         encouragementTimer = encouragementDuration;
     }
 
@@ -319,7 +265,7 @@ public class GameManager : MonoBehaviour
     {
         if (messagePanel != null)
         {
-            messagePanel.SetActive(false);
+            messagePanel.gameObject.SetActive(false);
         }
     }
 
@@ -367,7 +313,7 @@ public class GameManager : MonoBehaviour
             Destroy(heart, heartLifetime);
         }
     }
-    public void AddLife(int amount = 1)
+    public static void AddLife(int amount = 1)
     {
         player.AddLife();
         UpdateLifeUI();
@@ -376,7 +322,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// 생명 수 UI 갱신 (하트 이모지로 시각화)
     /// </summary>
-    public void UpdateLifeUI()
+    public static void UpdateLifeUI()
     {
         if (lifeText == null)
         {
@@ -455,5 +401,30 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public static void SetBulletSpawner(BulletSpawner spawner)
+    {
+        bulletSpawner = spawner;
+    }
+
+    public static void SetPlayer(PlayerController playerController)
+    {
+        player = playerController;
+    }
+
+    public static void SetLifeText(Text text)
+    {
+        lifeText = text;
+    }
+
+    public static void SetMessagePanel(MessagePanel panel)
+    {
+        messagePanel = panel;
+    }
+
+    public static void SetGameResultPanel(GameResultPanel panel)
+    {
+        gameResultPanel = panel;
     }
 }

@@ -29,11 +29,6 @@ public class GuidedBullet : Bullet
     }
     private void Update()
     {
-        if (GameManager.Instance != null && !GameManager.Instance.IsGameRunning)
-        {
-            return;
-        }
-
         rb.linearVelocity = transform.up * speed;
     }
 

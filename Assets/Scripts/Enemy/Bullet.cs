@@ -19,11 +19,6 @@ public class Bullet : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.Instance != null && !GameManager.Instance.IsGameRunning)
-        {
-            return;
-        }
-
         transform.Translate(direction * speed * Time.deltaTime, Space.World);
     }
 
@@ -41,15 +36,9 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        var manager = GameManager.Instance;
-        if (manager == null || !manager.IsGameRunning)
-        {
-            return;
-        }
-
         if (collider.TryGetComponent(out PlayerController player))
         {
-            manager.DamagePlayer();
+            GameManager.DamagePlayer();
             Destroy(gameObject);
         }
         else if (collider.TryGetComponent(out EscorteeController escortee))

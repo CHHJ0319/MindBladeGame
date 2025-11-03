@@ -73,7 +73,6 @@ public class EscorteeController : MonoBehaviour
     {
         Debug.Log("목표 지점에 도착");
 
-        var manager = GameManager.Instance;
-        manager.HandleGameClear();
+        GameManager.HandleGameClear();
     }
 }

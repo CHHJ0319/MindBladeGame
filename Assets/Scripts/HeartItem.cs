@@ -27,18 +27,12 @@ public class HeartItem : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        var manager = GameManager.Instance;
-        if (manager == null || !manager.IsGameRunning)
-        {
-            return;
-        }
-
         if (!other.TryGetComponent(out SwordController sword))
         {
             return;
         }
 
-        manager.AddLife();
+        GameManager.AddLife();
         Destroy(gameObject);
     }
 

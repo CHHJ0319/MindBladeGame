@@ -244,6 +244,56 @@ Transform:
   - {fileID: 547194889}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &232655880
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 232655881}
+  - component: {fileID: 232655882}
+  m_Layer: 5
+  m_Name: LifePanel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &232655881
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232655880}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 960010418}
+  m_Father: {fileID: 1149903014}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 251.2, y: 145.6}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &232655882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232655880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99f56a1ab26e9ac49998527853267cd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lifeText: {fileID: 960010419}
 --- !u!1 &388170668
 GameObject:
   m_ObjectHideFlags: 0
@@ -865,17 +915,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &707010026 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2409559292890112437, guid: 2f6b98b749698424d82dcb34b6766f35, type: 3}
-  m_PrefabInstance: {fileID: 1278106858}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3dab960269a098f409948cec2b82e935, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &728203001
 GameObject:
   m_ObjectHideFlags: 0
@@ -988,16 +1027,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 960010417}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1149903014}
+  m_Father: {fileID: 232655881}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 268, y: 172}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &960010419
@@ -1051,8 +1090,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1141653592}
+  - component: {fileID: 1141653593}
   m_Layer: 5
-  m_Name: GameOverPanel
+  m_Name: GameResultPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1078,6 +1118,19 @@ RectTransform:
   m_AnchoredPosition: {x: 50, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1141653593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1141653591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfdf273b01b82464a92d077b2f9d1464, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameResultText: {fileID: 1862294888}
 --- !u!1 &1149903010
 GameObject:
   m_ObjectHideFlags: 0
@@ -1172,7 +1225,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 960010418}
+  - {fileID: 232655881}
   - {fileID: 1943425786}
   - {fileID: 1141653592}
   m_Father: {fileID: 0}
@@ -1277,12 +1330,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sword: {fileID: 0}
-  player: {fileID: 707010026}
-  startingLives: 1
-  lifeText: {fileID: 960010419}
-  messagePanel: {fileID: 1943425785}
   messageText: {fileID: 1716314532}
-  gameOverPanel: {fileID: 1141653591}
   gameOverScoreText: {fileID: 1862294888}
   encouragementMessages:
   - "\uC88B\uC544\uC694! \uACC4\uC18D \uBC84\uD168\uBD10\uC694!"
@@ -1293,7 +1341,6 @@ MonoBehaviour:
   heartItemPrefab: {fileID: 2944375747481779535, guid: 45ca900ad6c38494ebcb74d5ebe40bf1, type: 3}
   heartSpawnInterval: 5
   heartLifetime: 6
-  bulletSpawner: {fileID: 0}
 --- !u!4 &1683683270
 Transform:
   m_ObjectHideFlags: 0
@@ -1488,7 +1535,7 @@ GameObject:
   - component: {fileID: 1862294889}
   - component: {fileID: 1862294888}
   m_Layer: 5
-  m_Name: GameOverScoreText
+  m_Name: GameResultText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1564,6 +1611,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1943425786}
+  - component: {fileID: 1943425787}
   m_Layer: 5
   m_Name: MessagePanel
   m_TagString: Untagged
@@ -1591,6 +1639,19 @@ RectTransform:
   m_AnchoredPosition: {x: 50, y: 120}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1943425787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1943425785}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e04c3c3447fc02c4c90f0643e679fcb7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  messageText: {fileID: 1716314532}
 --- !u!114 &2011172810 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3655233506502832192, guid: dbc0d034dfb26934d93f086908d8491a, type: 3}

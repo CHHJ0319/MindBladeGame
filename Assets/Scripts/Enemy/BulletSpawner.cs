@@ -46,15 +46,14 @@ public class BulletSpawner : MonoBehaviour
             Debug.LogWarning("Main Camera가 설정되지 않았습니다.");
             return;
         }
+
+        GameManager.SetBulletSpawner(this);
     }
 
-    /// <summary>
-    /// 매 프레임마다 탄환 생성 타이밍을 체크하고, 조건이 맞으면 탄환을 생성합니다.
-    /// </summary>
+
     private void Update()
     {
-        // 게임이 진행 중이 아니면 아무 것도 하지 않음
-        if (GameManager.Instance != null && !GameManager.Instance.IsGameRunning)
+        if (!GameManager.IsGameRunning)
         {
             return;
         }
@@ -84,7 +83,7 @@ public class BulletSpawner : MonoBehaviour
     private float GetCurrentInterval()
     {
         // 게임 매니저가 있으면 게임 경과 시간 사용, 없으면 씬 로드 후 경과 시간 사용
-        float elapsed = GameManager.Instance != null ? GameManager.Instance.ElapsedTime : Time.timeSinceLevelLoad;
+        float elapsed = GameManager.ElapsedTime;
         // 생성 간격 계산 (기본 간격 - 경과 시간 * 감소량)
         float interval = baseSpawnInterval - elapsed * spawnAcceleration;
         // 최소 간격 이하로 내려가지 않도록 보정
@@ -98,7 +97,7 @@ public class BulletSpawner : MonoBehaviour
     /// <returns>현재 탄환 속도</returns>
     private float GetCurrentSpeed()
     {
-        float elapsed = GameManager.Instance != null ? GameManager.Instance.ElapsedTime : Time.timeSinceLevelLoad;
+        float elapsed = GameManager.ElapsedTime;
         // 기본 속도 + 경과 시간 * 속도 증가량
         return baseBulletSpeed + elapsed * speedAcceleration;
     }

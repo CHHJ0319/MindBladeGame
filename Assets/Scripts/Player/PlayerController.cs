@@ -42,6 +42,8 @@ public class PlayerController : MonoBehaviour
         invincibleTimer = 0f;
 
         lives = Mathf.Max(1, startingLives);
+
+        GameManager.SetPlayer(this);
     }
 
     void Update()
