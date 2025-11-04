@@ -19,19 +19,17 @@ public class MessagePanel : MonoBehaviour
             "¸®µëÀ» ÀÒÁö ¸¶¼¼¿ä!"
     };
 
-    void Start()
+    void Awake()
     {
         UIManager.SetMessagePanel(this);
+    }
 
+    void Start()
+    {
         encouragementTimer = 0f;
     }
 
-    void Update()
-    {
-        HandleEncouragement();
-    }
-
-    private void HandleEncouragement()
+    public void HandleEncouragement()
     {
         if (GameManager.ElapsedTime >= encouragementInterval)
         {

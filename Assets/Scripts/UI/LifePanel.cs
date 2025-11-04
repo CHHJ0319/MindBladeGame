@@ -5,7 +5,7 @@ public class LifePanel : MonoBehaviour
 {
     public Text lifeText;
 
-    void Start()
+    void Awake()
     {
         UIManager.SetLifePanel(this);
     }

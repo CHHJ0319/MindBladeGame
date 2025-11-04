@@ -5,7 +5,7 @@ public class GameResultPanel : MonoBehaviour
 {
     public Text gameResultText;
 
-    void Start()
+    void Awake()
     {
         UIManager.SetGameResultPanel(this);
     }

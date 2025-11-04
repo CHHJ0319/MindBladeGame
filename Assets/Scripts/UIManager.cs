@@ -15,15 +15,12 @@ public class UIManager : MonoBehaviour
 
     void Update()
     {
-        
+        messagePanel.HandleEncouragement();
     }
 
     public static void SetMessagePanel(MessagePanel panel)
     {
-        if (messagePanel != null)
-        {
             messagePanel = panel;
-        }
     }
 
     public static void HideMessagePanel()

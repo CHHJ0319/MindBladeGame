@@ -29,6 +29,13 @@ public class PlayerController : MonoBehaviour
 
     private Vector2 targetDir;
 
+    private void Awake()
+    {
+        GameManager.SetPlayer(this);
+
+        lives = Mathf.Max(1, startingLives);
+    }
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -39,11 +46,7 @@ public class PlayerController : MonoBehaviour
         }
 
         isInvincible = false;
-        invincibleTimer = 0f;
-
-        lives = Mathf.Max(1, startingLives);
-
-        GameManager.SetPlayer(this);
+        invincibleTimer = 0f;      
     }
 
     void Update()
