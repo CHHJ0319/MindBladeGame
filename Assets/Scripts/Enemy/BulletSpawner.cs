@@ -35,10 +35,12 @@ public class BulletSpawner : MonoBehaviour
 
     private float guidedBulletRate = 0.5f;
 
-    /// <summary>
-    /// 게임 시작 시 메인 카메라를 찾아서 저장합니다.
-    /// </summary>
-    private void Start()
+    void Awake()
+    {
+        ActorManager.SetBulletSpawner(this);
+    }
+
+    void Start()
     {
         mainCamera = Camera.main;
         if (mainCamera == null)
@@ -46,12 +48,10 @@ public class BulletSpawner : MonoBehaviour
             Debug.LogWarning("Main Camera가 설정되지 않았습니다.");
             return;
         }
-
-        GameManager.SetBulletSpawner(this);
     }
 
 
-    private void Update()
+    void Update()
     {
         if (!GameManager.IsGameRunning)
         {

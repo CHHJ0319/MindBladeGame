@@ -12,7 +12,6 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     private static PlayerController player;
-    private static BulletSpawner bulletSpawner;  
 
     private static float elapsedTime;
     public static float ElapsedTime => elapsedTime;
@@ -47,13 +46,8 @@ public class GameManager : MonoBehaviour
         elapsedTime = 0f;
 
         ActorManager.ResetHeartItemSpawnTimer();
-
         UIManager.UpdatePlayerLifeUI(player.Lives);
-
-        if (bulletSpawner != null)
-        {
-            bulletSpawner.enabled = true;
-        }
+        ActorManager.EnableBulletSpawner();
     }
 
     public static void DamagePlayer()
@@ -82,10 +76,7 @@ public class GameManager : MonoBehaviour
         isGameOver = true;
         Time.timeScale = 0f;
 
-        if (bulletSpawner != null)
-        {
-            bulletSpawner.enabled = false;
-        }
+        ActorManager.DisableBulletSpawner();
 
         UIManager.HideMessagePanel();
         UIManager.ResetEncouragementTimer();
@@ -97,10 +88,7 @@ public class GameManager : MonoBehaviour
         isGameOver = true;
         Time.timeScale = 0f;
 
-        if (bulletSpawner != null)
-        {
-            bulletSpawner.enabled = false;
-        }
+        ActorManager.DisableBulletSpawner();
 
         UIManager.HideMessagePanel();
         UIManager.ResetEncouragementTimer();
@@ -113,18 +101,10 @@ public class GameManager : MonoBehaviour
         UIManager.UpdatePlayerLifeUI(player.Lives);
     }
 
-    /// <summary>
-    /// 현재 씬을 다시 로드하여 게임 재시작
-    /// </summary>
     private void RestartGame()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
-
-    public static void SetBulletSpawner(BulletSpawner spawner)
-    {
-        bulletSpawner = spawner;
     }
 
     public static void SetPlayer(PlayerController playerController)

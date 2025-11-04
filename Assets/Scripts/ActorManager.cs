@@ -3,6 +3,7 @@ using UnityEngine;
 public class ActorManager : MonoBehaviour
 {
     private static ItemSpawner itemSpawner;
+    private static BulletSpawner bulletSpawner;
 
     void Update()
     {
@@ -22,11 +23,32 @@ public class ActorManager : MonoBehaviour
         }
     }
 
-    private void HandleHeartItemSpawn()
+    private static void HandleHeartItemSpawn()
     {
         if (itemSpawner != null)
         {
             itemSpawner.HandleHeartItemSpawn();
+        }
+    }
+
+    public static void SetBulletSpawner(BulletSpawner spawner)
+    {
+        bulletSpawner = spawner;
+    }
+
+    public static void EnableBulletSpawner()
+    {
+        if (bulletSpawner != null)
+        {
+            bulletSpawner.enabled = true;
+        }
+    }
+
+    public static void DisableBulletSpawner()
+    {
+        if (bulletSpawner != null)
+        {
+            bulletSpawner.enabled = false;
         }
     }
 }
