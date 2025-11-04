@@ -24,11 +24,6 @@ public class MessagePanel : MonoBehaviour
         UIManager.SetMessagePanel(this);
     }
 
-    void Start()
-    {
-        encouragementTimer = 0f;
-    }
-
     public void HandleEncouragement()
     {
         if (GameManager.ElapsedTime >= encouragementInterval)
