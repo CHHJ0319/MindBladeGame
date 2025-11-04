@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        GameManager.SetPlayer(this);
+        ActorManager.SetPlayer(this);
 
         lives = Mathf.Max(1, startingLives);
     }
@@ -77,14 +77,12 @@ public class PlayerController : MonoBehaviour
         rb.MovePosition(rb.position + targetDir * distanceToMove);
 
     }
-
     private void UpdateInvincibility()
     {
         if (!isInvincible)
         {
             return;
         }
-
 
         invincibleTimer -= Time.deltaTime;
         if (invincibleTimer <= 0f)
@@ -104,7 +102,7 @@ public class PlayerController : MonoBehaviour
         lives = Mathf.Max(0, lives - 1);
     }
 
-    public void AddLife(int amount = 1)
+    public void AddLife(int amount)
     {
         if (amount <= 0)
         {

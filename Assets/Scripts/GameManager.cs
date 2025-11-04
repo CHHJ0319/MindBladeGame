@@ -1,17 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
-/// <summary>
-/// 게임의 전체 상태를 관리하는 매니저 클래스입니다.
-/// - 플레이어 생명, 무적, UI, 아이템, 랭킹, 게임 오버 등 모든 게임 흐름을 제어합니다.
-/// </summary>
 public class GameManager : MonoBehaviour
 {
-    private static PlayerController player;
+    
 
     private static float elapsedTime;
     public static float ElapsedTime => elapsedTime;
@@ -41,39 +33,43 @@ public class GameManager : MonoBehaviour
 
     private void StartGame()
     {
+        InitGame();
+        ActorManager.ResetHeartItemSpawnTimer();
+        UpdatePlayerLifeUI();
+        ActorManager.EnableBulletSpawner();
+    }
+
+    private void InitGame()
+    {
         Time.timeScale = 1f;
         isGameOver = false;
         elapsedTime = 0f;
-
-        ActorManager.ResetHeartItemSpawnTimer();
-        UIManager.UpdatePlayerLifeUI(player.Lives);
-        ActorManager.EnableBulletSpawner();
     }
 
     public static void DamagePlayer()
     {
-        if (!IsGameRunning || player.IsInvincible)
+        if (!IsGameRunning)
         {
             return;
         }
 
-        player.TakeDamage();
-        UIManager.UpdatePlayerLifeUI(player.Lives);
+        ActorManager.DamagePlayer(out isGameOver);
+        UpdatePlayerLifeUI();
 
-        // 생명이 0 이하이면 게임 오버 처리
-        if (player.Lives <= 0)
+        if (isGameOver)
         {
             HandleGameOver();
         }
-        else
-        {
-            player.StartInvincibility();
-        }
+    }
+
+    public static void AddLife(int amount = 1)
+    {
+        ActorManager.AddLife(amount);
+        UpdatePlayerLifeUI();
     }
 
     private static void HandleGameOver()
     {
-        isGameOver = true;
         Time.timeScale = 0f;
 
         ActorManager.DisableBulletSpawner();
@@ -95,20 +91,15 @@ public class GameManager : MonoBehaviour
         UIManager.ShowGameClearMessage();
     }
 
-    public static void AddLife(int amount = 1)
-    {
-        player.AddLife();
-        UIManager.UpdatePlayerLifeUI(player.Lives);
-    }
-
     private void RestartGame()
     {
-        Time.timeScale = 1f;
+        InitGame();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    public static void SetPlayer(PlayerController playerController)
+    private static void UpdatePlayerLifeUI()
     {
-        player = playerController;
+        int playerLives = ActorManager.GetPlayerLives();
+        UIManager.UpdatePlayerLifeUI(playerLives);
     }
 }
