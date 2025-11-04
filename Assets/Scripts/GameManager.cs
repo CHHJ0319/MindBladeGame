@@ -11,10 +11,6 @@ using UnityEngine.UI;
 /// </summary>
 public class GameManager : MonoBehaviour
 {
-    /// <summary>
-    /// 싱글톤 인스턴스. 어디서든 GameManager.Instance로 접근 가능합니다.
-    /// </summary>
-
     [Header("플레이어 설정")]
     [Tooltip("게임에서 조작할 플레이어 스크립트")]
     [SerializeField] private SwordController sword;
@@ -24,20 +20,6 @@ public class GameManager : MonoBehaviour
 
     [Tooltip("게임 오버 시 점수를 표시하는 Text")]
     [SerializeField] private Text gameOverScoreText;
-
-    [Header("격려 메시지 설정")]
-    [Tooltip("10초마다 순환될 격려 메시지 목록")]
-    [SerializeField]
-    private string[] encouragementMessages =
-    {
-            "좋아요! 계속 버텨봐요!",
-            "집중력을 유지하세요!",
-            "조금만 더!",
-            "리듬을 잃지 마세요!"
-        };
-
-    [Tooltip("격려 메시지가 유지되는 시간(초)")]
-    [SerializeField] private float encouragementDuration = 2.5f;
 
     [Header("하트 아이템")]
     [Tooltip("생명을 회복하는 하트 아이템 프리팹")]
@@ -50,59 +32,34 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float heartLifetime = 6f;
 
     private static PlayerController player;
-    private static BulletSpawner bulletSpawner;
-
-    private static Text lifeText;
-    private static MessagePanel messagePanel;
-    private static GameResultPanel gameResultPanel;
-
-    // 리더보드(랭킹) 점수 리스트
-    private readonly List<float> leaderboard = new List<float>();
-    // PlayerPrefs에 저장할 키
-    private const string LeaderboardKey = "GM_LEADERBOARD";
-    // 리더보드에 표시할 최대 점수 개수
-    private const int MaxLeaderboardEntries = 5;
+    private static BulletSpawner bulletSpawner;  
 
     private static float elapsedTime;
+    public static float ElapsedTime => elapsedTime;
 
-    
-    // 다음 격려 메시지 표시까지 남은 시간(초)
-    private float nextEncouragementTime = 10f;
-    private static float encouragementTimer;
+
     // 하트 아이템 생성 타이머
     private float heartTimer;
 
     private static bool isGameOver;
     public static bool IsGameRunning => !isGameOver;
 
-    public static float ElapsedTime => elapsedTime;
 
     private void Awake()
     {
-        // 플레이어 및 탄환 생성기 자동 연결
         if (sword == null)
         {
             sword = FindObjectOfType<SwordController>();
         }
-
-        // 리더보드 불러오기
-        LoadLeaderboard();
     }
 
-    /// <summary>
-    /// 게임 시작 시 초기화
-    /// </summary>
     private void Start()
     {
         StartGame();
     }
 
-    /// <summary>
-    /// 매 프레임마다 게임 상태 업데이트
-    /// </summary>
     private void Update()
     {
-        // 게임 오버 상태일 때 엔터키로 재시작 가능
         if (!IsGameRunning)
         {
             if (Input.GetKeyDown(KeyCode.Return))
@@ -112,39 +69,22 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // 경과 시간 증가
         elapsedTime += Time.deltaTime;
 
-        // 격려 메시지, 하트 아이템, 무적 상태 처리
-        HandleEncouragement();
+        
         HandleHeartSpawn();
     }
 
-    /// <summary>
-    /// 게임을 시작할 때 모든 변수와 UI를 초기화
-    /// </summary>
     private void StartGame()
     {
         Time.timeScale = 1f;
         isGameOver = false;
         elapsedTime = 0f;
         
-        nextEncouragementTime = 10f;
-        encouragementTimer = 0f;
         heartTimer = 0f;
 
-        UpdateLifeUI();
+        UIManager.UpdatePlayerLifeUI(player.Lives);
 
-        // 격려 메시지, 게임 오버 패널 숨기기
-        if (messagePanel != null)
-        {
-            messagePanel.gameObject.SetActive(false);
-        }
-        if (gameResultPanel != null)
-        {
-            gameResultPanel.gameObject.SetActive(false);
-        }
-        // 탄환 생성기 활성화
         if (bulletSpawner != null)
         {
             bulletSpawner.enabled = true;
@@ -158,9 +98,8 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // 생명 감소
         player.TakeDamage();
-        UpdateLifeUI();
+        UIManager.UpdatePlayerLifeUI(player.Lives);
 
         // 생명이 0 이하이면 게임 오버 처리
         if (player.Lives <= 0)
@@ -183,17 +122,9 @@ public class GameManager : MonoBehaviour
             bulletSpawner.enabled = false;
         }
 
-        if (messagePanel != null)
-        {
-            messagePanel.gameObject.SetActive(false);
-        }
-        encouragementTimer = 0f;
-
-        if (gameResultPanel != null)
-        {
-            gameResultPanel.gameObject.SetActive(true);
-            gameResultPanel.SetGameResultText("Game Over");
-        }
+        UIManager.HideMessagePanel();
+        UIManager.ResetEncouragementTimer();
+        UIManager.ShowGameOverMessage();   
     }
 
     public static void HandleGameClear()
@@ -206,67 +137,9 @@ public class GameManager : MonoBehaviour
             bulletSpawner.enabled = false;
         }
 
-        if (messagePanel != null)
-        {
-            messagePanel.gameObject.SetActive(false);
-        }
-        encouragementTimer = 0f;
-
-        if (gameResultPanel != null)
-        {
-            gameResultPanel.gameObject.SetActive(true);
-            gameResultPanel.SetGameResultText("Game Clear");
-        }
-    }
-
-    /// <summary>
-    /// 일정 시간마다 격려 메시지 표시 및 숨김 처리
-    /// </summary>
-    private void HandleEncouragement()
-    {
-        // 경과 시간이 다음 격려 메시지 시간에 도달하면 메시지 표시
-        if (elapsedTime >= nextEncouragementTime)
-        {
-            ShowEncouragement();
-            nextEncouragementTime += 10f;
-        }
-
-        // 메시지 표시 타이머가 남아있으면 감소시키고, 시간이 다 되면 숨김
-        if (encouragementTimer > 0f)
-        {
-            encouragementTimer -= Time.deltaTime;
-            if (encouragementTimer <= 0f)
-            {
-                HideEncouragement();
-            }
-        }
-    }
-
-    /// <summary>
-    /// 격려 메시지 패널을 활성화하고 랜덤 메시지 표시
-    /// </summary>
-    private void ShowEncouragement()
-    {
-        if (messagePanel == null || messageText == null || encouragementMessages == null || encouragementMessages.Length == 0)
-        {
-            return;
-        }
-
-        var message = encouragementMessages[Random.Range(0, encouragementMessages.Length)];
-        messageText.text = message;
-        messagePanel.gameObject.SetActive(true);
-        encouragementTimer = encouragementDuration;
-    }
-
-    /// <summary>
-    /// 격려 메시지 패널을 숨김
-    /// </summary>
-    private void HideEncouragement()
-    {
-        if (messagePanel != null)
-        {
-            messagePanel.gameObject.SetActive(false);
-        }
+        UIManager.HideMessagePanel();
+        UIManager.ResetEncouragementTimer();
+        UIManager.ShowGameClearMessage();
     }
 
     /// <summary>
@@ -316,82 +189,7 @@ public class GameManager : MonoBehaviour
     public static void AddLife(int amount = 1)
     {
         player.AddLife();
-        UpdateLifeUI();
-    }
-
-    /// <summary>
-    /// 생명 수 UI 갱신 (하트 이모지로 시각화)
-    /// </summary>
-    public static void UpdateLifeUI()
-    {
-        if (lifeText == null)
-        {
-            return;
-        }
-
-        if (player.Lives <= 0)
-        {
-            lifeText.text = "Life : 0";
-            return;
-        }
-
-        // 생명 수만큼 하트 이모지 표시(최대 10개)
-        string heartDisplay = new string('\u2665', Mathf.Clamp(player.Lives, 0, 10));
-        lifeText.text = $"Life : {player.Lives}  {heartDisplay}";
-    }
-
-    /// <summary>
-    /// 리더보드에 점수 추가 및 저장, UI 갱신
-    /// </summary>
-    /// <param name="score">추가할 점수(생존 시간)</param>
-    private void TryAddScore(float score)
-    {
-        leaderboard.Add(score);
-        leaderboard.Sort((a, b) => b.CompareTo(a)); // 내림차순 정렬
-        if (leaderboard.Count > MaxLeaderboardEntries)
-        {
-            leaderboard.RemoveRange(MaxLeaderboardEntries, leaderboard.Count - MaxLeaderboardEntries);
-        }
-
-        SaveLeaderboard();
-    }
-
-    /// <summary>
-    /// PlayerPrefs에서 리더보드 점수 불러오기
-    /// </summary>
-    private void LoadLeaderboard()
-    {
-        leaderboard.Clear();
-        string saved = PlayerPrefs.GetString(LeaderboardKey, string.Empty);
-        if (string.IsNullOrEmpty(saved))
-        {
-            return;
-        }
-
-        string[] parts = saved.Split('|');
-        foreach (string part in parts)
-        {
-            if (float.TryParse(part, out float value))
-            {
-                leaderboard.Add(value);
-            }
-        }
-
-        leaderboard.Sort((a, b) => b.CompareTo(a));
-        if (leaderboard.Count > MaxLeaderboardEntries)
-        {
-            leaderboard.RemoveRange(MaxLeaderboardEntries, leaderboard.Count - MaxLeaderboardEntries);
-        }
-    }
-
-    /// <summary>
-    /// PlayerPrefs에 리더보드 점수 저장
-    /// </summary>
-    private void SaveLeaderboard()
-    {
-        string data = string.Join("|", leaderboard.Select(v => v.ToString("F3")));
-        PlayerPrefs.SetString(LeaderboardKey, data);
-        PlayerPrefs.Save();
+        UIManager.UpdatePlayerLifeUI(player.Lives);
     }
 
     /// <summary>
@@ -411,20 +209,5 @@ public class GameManager : MonoBehaviour
     public static void SetPlayer(PlayerController playerController)
     {
         player = playerController;
-    }
-
-    public static void SetLifeText(Text text)
-    {
-        lifeText = text;
-    }
-
-    public static void SetMessagePanel(MessagePanel panel)
-    {
-        messagePanel = panel;
-    }
-
-    public static void SetGameResultPanel(GameResultPanel panel)
-    {
-        gameResultPanel = panel;
     }
 }

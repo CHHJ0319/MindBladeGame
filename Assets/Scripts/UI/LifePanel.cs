@@ -7,12 +7,13 @@ public class LifePanel : MonoBehaviour
 
     void Start()
     {
-        GameManager.SetLifeText(lifeText);
+        UIManager.SetLifePanel(this);
     }
-
-    // Update is called once per frame
-    void Update()
+    public void SetLifetText(string text)
     {
-        
+        if (lifeText != null)
+        {
+            lifeText.text = text;
+        }
     }
 }
