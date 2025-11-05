@@ -105,7 +105,7 @@ MonoBehaviour:
   speed: 15
   lifeTime: 5
   direction: {x: 1, y: 0}
-  target: {fileID: 2298760356876082492, guid: 2f6b98b749698424d82dcb34b6766f35, type: 3}
+  target: {fileID: 926831243345050070, guid: dbc0d034dfb26934d93f086908d8491a, type: 3}
 --- !u!61 &7036726598672772922
 BoxCollider2D:
   m_ObjectHideFlags: 0

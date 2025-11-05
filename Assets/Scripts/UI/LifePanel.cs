@@ -3,17 +3,26 @@ using UnityEngine.UI;
 
 public class LifePanel : MonoBehaviour
 {
-    public Text lifeText;
+    public Text PlayerLifeText;
+    public Text EscorteeLifeText;
 
     void Awake()
     {
         UIManager.SetLifePanel(this);
     }
-    public void SetLifetText(string text)
+    public void SetPlayerLifetText(string text)
     {
-        if (lifeText != null)
+        if (PlayerLifeText != null)
         {
-            lifeText.text = text;
+            PlayerLifeText.text = text;
+        }
+    }
+
+    public void SetEscorteeLifetText(string text)
+    {
+        if (EscorteeLifeText != null)
+        {
+            EscorteeLifeText.text = text;
         }
     }
 }

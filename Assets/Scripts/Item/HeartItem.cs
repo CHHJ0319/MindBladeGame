@@ -32,7 +32,7 @@ public class HeartItem : MonoBehaviour
             return;
         }
 
-        GameManager.AddLife();
+        GameManager.AddPlayerLife();
         Destroy(gameObject);
     }
 

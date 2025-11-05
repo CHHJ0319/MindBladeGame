@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class EscorteeController : MonoBehaviour
 {
-    public float moveSpeed = 1f;
+    [Header("Property")]
+    [SerializeField] private float moveSpeed = 1f;
+    [SerializeField] private float invincibilityDuration = 1.5f;
 
     private Vector3 goalPos;
     private Vector2 direction;
@@ -11,7 +13,19 @@ public class EscorteeController : MonoBehaviour
         get { return direction; }
     }
 
-    private Rigidbody2D rb;
+    private int lives;
+    public int Lives
+    {
+        get { return lives; }
+    }
+    private int startingLives = 1;
+
+    private bool isInvincible;
+    public bool IsInvincible
+    {
+        get { return isInvincible; }
+    }
+    private float invincibleTimer;
 
     private bool isMoving = true;
     public bool IsMoving
@@ -19,17 +33,15 @@ public class EscorteeController : MonoBehaviour
         get { return isMoving; }
     }
 
-    void Start()
-    {
-        rb = GetComponent<Rigidbody2D>();
-        if (rb == null)
-        {
-            enabled = false;
-            return;
-        }
+    private Rigidbody2D rb;
 
-        goalPos = SetGoalPosition();
+
+    private void Awake()
+    {
+        ActorManager.SetEscortee(this);
+        lives = Mathf.Max(1, startingLives);
     }
+
     void FixedUpdate()
     {
         if (!isMoving)
@@ -39,6 +51,26 @@ public class EscorteeController : MonoBehaviour
         }
 
         MoveToGoal();
+    }
+
+    void Update()
+    {
+        UpdateInvincibility();
+    }
+
+    public void InitEscortee()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        if (rb == null)
+        {
+            enabled = false;
+            return;
+        }
+
+        goalPos = SetGoalPosition();
+
+        isInvincible = false;
+        invincibleTimer = 0f;
     }
 
     private Vector3 SetGoalPosition()
@@ -74,5 +106,39 @@ public class EscorteeController : MonoBehaviour
         Debug.Log("목표 지점에 도착");
 
         GameManager.HandleGameClear();
+    }
+
+    public void TakeDamage()
+    {
+        lives = Mathf.Max(0, lives - 1);
+    }
+
+    public void AddLife(int amount)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        lives += amount;
+    }
+    private void UpdateInvincibility()
+    {
+        if (!isInvincible)
+        {
+            return;
+        }
+
+        invincibleTimer -= Time.deltaTime;
+        if (invincibleTimer <= 0f)
+        {
+            isInvincible = false;
+        }
+    }
+
+    public void StartInvincibility()
+    {
+        isInvincible = true;
+        invincibleTimer = invincibilityDuration;
     }
 }

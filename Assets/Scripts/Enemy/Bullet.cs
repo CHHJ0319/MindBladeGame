@@ -43,6 +43,7 @@ public class Bullet : MonoBehaviour
         }
         else if (collider.TryGetComponent(out EscorteeController escortee))
         {
+            GameManager.DamageEscortee();
             Destroy(gameObject);
         }
         else if (collider.TryGetComponent(out SwordController sword))

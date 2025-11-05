@@ -83,11 +83,28 @@ public class UIManager : MonoBehaviour
 
         if (lives <= 0)
         {
-            lifePanel.SetLifetText("Life : 0");
+            lifePanel.SetPlayerLifetText("Life : 0");
             return;
         }
 
         string heartIcon = new string('\u2665', Mathf.Clamp(lives, 0, 10));
-        lifePanel.SetLifetText($"Life : {lives}  {heartIcon}");
+        lifePanel.SetPlayerLifetText($"Player : {lives}  {heartIcon}");
+    }
+
+    public static void UpdateEscorteeLifeUI(int lives)
+    {
+        if (lifePanel == null)
+        {
+            return;
+        }
+
+        if (lives <= 0)
+        {
+            lifePanel.SetEscorteeLifetText("Life : 0");
+            return;
+        }
+
+        string heartIcon = new string('\u2665', Mathf.Clamp(lives, 0, 10));
+        lifePanel.SetEscorteeLifetText($"Escortee : {lives}  {heartIcon}");
     }
 }

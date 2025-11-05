@@ -4,9 +4,16 @@ using UnityEngine;
 public class ActorManager : MonoBehaviour
 {
     private static PlayerController player;
+    private static EscorteeController escortee;
 
     private static ItemSpawner itemSpawner;
     private static BulletSpawner bulletSpawner;
+
+    private void Start()
+    {
+        InitEscortee();
+        InitPlayer();
+    }
 
     void Update()
     {
@@ -97,6 +104,63 @@ public class ActorManager : MonoBehaviour
         else
         {
             return 0;
+        }
+    }
+
+    private static void InitPlayer()
+    {
+        if (player != null)
+        {
+            player.InitPlayer();
+        }
+    }
+
+    public static void SetEscortee(EscorteeController controller)
+    {
+        escortee = controller;
+    }
+
+    public static void DamageEscortee(out bool isGameover)
+    {
+        isGameover = false;
+
+        if (escortee != null)
+        {
+            if (escortee.IsInvincible)
+            {
+                return;
+            }
+
+            escortee.TakeDamage();
+
+            if (escortee.Lives <= 0)
+            {
+                isGameover = true;
+            }
+            else
+            {
+                escortee.StartInvincibility();
+            }
+        }
+    }
+
+    public static int GetEscorteeLives()
+    {
+        if (escortee != null)
+        {
+            return escortee.Lives;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    private static void InitEscortee()
+    {
+        if (escortee != null)
+        {
+            escortee.InitEscortee();
         }
     }
 }

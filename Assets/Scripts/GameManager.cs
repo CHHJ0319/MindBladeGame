@@ -3,8 +3,6 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    
-
     private static float elapsedTime;
     public static float ElapsedTime => elapsedTime;
 
@@ -34,8 +32,10 @@ public class GameManager : MonoBehaviour
     private void StartGame()
     {
         InitGame();
+
         ActorManager.ResetHeartItemSpawnTimer();
         UpdatePlayerLifeUI();
+        UpdateEscorteeLifeUI();
         ActorManager.EnableBulletSpawner();
     }
 
@@ -62,10 +62,26 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public static void AddLife(int amount = 1)
+    public static void AddPlayerLife(int amount = 1)
     {
         ActorManager.AddLife(amount);
         UpdatePlayerLifeUI();
+    }
+
+    public static void DamageEscortee()
+    {
+        if (!IsGameRunning)
+        {
+            return;
+        }
+
+        ActorManager.DamageEscortee(out isGameOver);
+        UpdateEscorteeLifeUI();
+
+        if (isGameOver)
+        {
+            HandleGameOver();
+        }
     }
 
     private static void HandleGameOver()
@@ -101,5 +117,11 @@ public class GameManager : MonoBehaviour
     {
         int playerLives = ActorManager.GetPlayerLives();
         UIManager.UpdatePlayerLifeUI(playerLives);
+    }
+
+    private static void UpdateEscorteeLifeUI()
+    {
+        int escorteeLives = ActorManager.GetEscorteeLives();
+        UIManager.UpdateEscorteeLifeUI(escorteeLives);
     }
 }

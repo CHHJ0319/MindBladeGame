@@ -36,19 +36,6 @@ public class PlayerController : MonoBehaviour
         lives = Mathf.Max(1, startingLives);
     }
 
-    void Start()
-    {
-        rb = GetComponent<Rigidbody2D>();
-        if (rb == null)
-        {
-            enabled = false;
-            return;
-        }
-
-        isInvincible = false;
-        invincibleTimer = 0f;      
-    }
-
     void Update()
     {
         UpdateInvincibility();
@@ -64,6 +51,19 @@ public class PlayerController : MonoBehaviour
 
         SetDirection();
         MovePlayer();
+    }
+
+    public void InitPlayer()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        if (rb == null)
+        {
+            enabled = false;
+            return;
+        }
+
+        isInvincible = false;
+        invincibleTimer = 0f;
     }
 
     private void SetDirection()
