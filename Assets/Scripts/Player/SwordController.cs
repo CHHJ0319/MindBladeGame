@@ -14,18 +14,6 @@ public class SwordController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    private void Update()
-    {
-        if (!GameManager.IsGameRunning)
-        {
-            movement = Vector2.zero;
-            return;
-        }
-
-        movement.x = Input.GetAxisRaw("Horizontal");
-        movement.y = Input.GetAxisRaw("Vertical");
-    }
-
     private void FixedUpdate()
     {
         if (!GameManager.IsGameRunning)
@@ -38,6 +26,12 @@ public class SwordController : MonoBehaviour
         rb.MovePosition(rb.position + dir * moveSpeed * Time.fixedDeltaTime);
 
         RotateTowardsDirection(dir);
+    }
+
+    public void Move(float movemontX, float movemontY)
+    {
+        movement.x = movemontX;
+        movement.y = movemontY;
     }
 
     private void RotateTowardsDirection(Vector3 direction)

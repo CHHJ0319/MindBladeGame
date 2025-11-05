@@ -383,7 +383,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dab960269a098f409948cec2b82e935, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  escortee: {fileID: 0}
+  sword: {fileID: 156282550025289233}
   moveSpeed: 1
+  invincibilityDuration: 1.5
 --- !u!95 &7263256645605082231
 Animator:
   serializedVersion: 7

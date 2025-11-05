@@ -1,15 +1,22 @@
-using TMPro;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
     [Header("Escortee")]
     public EscorteeController escortee;
 
+    [Header("Weapon")]
+    public SwordController sword;
+
     [Header("Property")]
     public float moveSpeed = 1f;
     [SerializeField] private float invincibilityDuration = 1.5f;
+
+    private float maxEnergy = 100f;
+    private float currentEnergy = 100f;
+    private float swordMoveEnergyCost = 15f;
+    private float restoreEnergyTime = 3f;
 
     private bool isInvincible;
     public bool IsInvincible 
@@ -25,9 +32,11 @@ public class PlayerController : MonoBehaviour
     }
     private int startingLives = 3;
 
-    private Rigidbody2D rb;
-
     private Vector2 targetDir;
+
+    private bool isSwordMovable = false;
+
+    private Rigidbody2D rb;
 
     private void Awake()
     {
@@ -39,6 +48,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         UpdateInvincibility();
+        MoveSword();
     }
 
     void FixedUpdate()
@@ -64,6 +74,11 @@ public class PlayerController : MonoBehaviour
 
         isInvincible = false;
         invincibleTimer = 0f;
+
+        if(currentEnergy > 0)
+        {
+            isSwordMovable = true;
+        }
     }
 
     private void SetDirection()
@@ -77,6 +92,7 @@ public class PlayerController : MonoBehaviour
         rb.MovePosition(rb.position + targetDir * distanceToMove);
 
     }
+
     private void UpdateInvincibility()
     {
         if (!isInvincible)
@@ -110,5 +126,73 @@ public class PlayerController : MonoBehaviour
         }
 
         lives += amount;
+    }
+
+    public void UseEnergy(float amount)
+    {
+        currentEnergy -= amount;
+    }
+
+    private void MoveSword()
+    {
+        if (GameManager.IsGameRunning && sword != null)
+        {
+            if (!isSwordMovable)
+            {
+                sword.Move(0f, 0f);
+                return;
+            }
+
+            float movemontX = Input.GetAxisRaw("Horizontal");
+            float movemontY = Input.GetAxisRaw("Vertical");
+            sword.Move(movemontX, movemontY);
+
+
+            if (movemontX != 0 || movemontY != 0)
+            {
+                currentEnergy -= swordMoveEnergyCost * Time.deltaTime;
+
+                float energyRatio= 0f;
+                if (currentEnergy <= 0)
+                {
+                    isSwordMovable = false;
+                    energyRatio = 0f;
+
+                    escortee.IsMoving = false;
+
+                    StopAllCoroutines();
+                    StartCoroutine(RestoreEnergy());
+                }
+                else
+                {
+                    energyRatio = currentEnergy / maxEnergy;
+                }
+                UIManager.UpdateEnergybarUI(energyRatio);
+            }
+        }
+    }
+
+    private IEnumerator RestoreEnergy()
+    {
+        float elapsedTime = 0f;
+
+        while (elapsedTime < restoreEnergyTime)
+        {
+            float fillRatio = elapsedTime / restoreEnergyTime;
+
+            currentEnergy = Mathf.Lerp(0f, maxEnergy, fillRatio);
+
+            UIManager.UpdateEnergybarUI(fillRatio);
+
+            elapsedTime += Time.deltaTime;
+
+            yield return null;
+        }
+
+        currentEnergy = maxEnergy;
+        UIManager.UpdateEnergybarUI(1f);
+
+        isSwordMovable = true;
+        escortee.IsMoving = true;
     }
 }

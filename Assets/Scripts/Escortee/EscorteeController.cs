@@ -31,6 +31,7 @@ public class EscorteeController : MonoBehaviour
     public bool IsMoving
     {
         get { return isMoving; }
+        set { isMoving = value; }  
     }
 
     private Rigidbody2D rb;

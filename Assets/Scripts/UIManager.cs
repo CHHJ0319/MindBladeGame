@@ -7,11 +7,14 @@ public class UIManager : MonoBehaviour
     private static GameResultPanel gameResultPanel;
     private static LifePanel lifePanel;
 
+    private static Energybar energybar;
+
     void Start()
     {
         HideMessagePanel();
         HideGameResultPanel();
         ResetEncouragementTimer();
+        ResetEnergybarUI();
     }
 
     void Update()
@@ -106,5 +109,26 @@ public class UIManager : MonoBehaviour
 
         string heartIcon = new string('\u2665', Mathf.Clamp(lives, 0, 10));
         lifePanel.SetEscorteeLifetText($"Escortee : {lives}  {heartIcon}");
+    }
+
+    public static void SetEnergybar(Energybar bar)
+    {
+        energybar = bar;
+    }
+
+    public static void UpdateEnergybarUI(float amount)
+    {
+        if (energybar != null)
+        {
+            energybar.UpdateEnergybarUI(amount);
+        }
+    }
+
+    public static void ResetEnergybarUI()
+    {
+        if (energybar != null)
+        {
+            energybar.UpdateEnergybarUI(1f);
+        }
     }
 }
